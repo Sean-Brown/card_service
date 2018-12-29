@@ -1,0 +1,43 @@
+{
+    "name": "card_service",
+    "version": "1.0.0",
+    "author": "Sean Brown",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/Sean-Brown/card_service/issues"
+    },
+    "homepage": "https://github.com/Sean-Brown/card_service#readme",
+    "engines": {
+      "node": "8.11.4",
+      "npm": "6.3.0"
+    },
+    "description": "Web service for playing card games",
+    "scripts": {
+      "build": "node ./node_modules/.bin/tsc",
+      "clean": "rm -rf node_modules && rm -r **/*.js **/*.js.map || true",
+      "test": "yarn clean && yarn && yarn build && jasmine-node ./spec/"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Sean-Brown/card_service.git"
+    },
+    "dependencies": {
+      "expect": "^1.13.4",
+      "typescript": "2.9.2"
+    },
+    "devDependencies": {
+      "@types/expect": "^1.20.3",
+      "@types/karma": "^1.7.5",
+      "@types/jest": "^23.3.10",
+      "grunt": "^1.0.3",
+      "jasmine-node": "^2.0.0-beta4",
+      "jest": "^23.6.0",
+      "tslint": "^5.11.0"
+    },
+    "keywords": [
+      "cards",
+      "cribbage",
+      "typescript"
+    ]
+  }
+  
