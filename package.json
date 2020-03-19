@@ -1,12 +1,12 @@
 {
-    "name": "card_service",
+    "name": "card_games",
     "version": "1.0.0",
     "author": "Sean Brown",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/Sean-Brown/card_service/issues"
+        "url": "https://github.com/Sean-Brown/card_games/issues"
     },
-    "homepage": "https://github.com/Sean-Brown/card_service#readme",
+    "homepage": "https://github.com/Sean-Brown/card_games#readme",
     "engines": {
         "node": "^10.0.0",
         "npm": "^6.0.0"
