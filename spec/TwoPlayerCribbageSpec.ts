@@ -1,53 +1,96 @@
 import * as expect from 'expect';
-import { Players, removeLastTwoChars, Sequence } from '../../card_service/base_classes/card_game';
-import { BaseHand } from '../../card_service/base_classes/collections/hand';
-import { ItemCollection } from '../../card_service/base_classes/collections/item_collection';
-import { BaseCard, Suit, Value } from '../../card_service/base_classes/items/card';
-import { Cribbage, CribbageStrings } from '../../card_service/implementations/cribbage';
-import { CribbageHand } from '../../card_service/implementations/cribbage_hand';
-import { CribbagePlayer } from '../../card_service/implementations/cribbage_player';
+import { CribbageStrings, Cribbage } from '../implementations/cribbage';
+import { CribbagePlayer } from '../implementations/cribbage_player';
+import { CribbageHand } from '../implementations/cribbage_hand';
+import {
+    Players,
+    Sequence,
+    removeLastTwoChars,
+} from '../base_classes/card_game';
+import { BaseCard, Suit, Value } from '../base_classes/items/card';
+import { BaseHand } from '../base_classes/collections/hand';
+import { ItemCollection } from '../base_classes/collections/item_collection';
 import ErrorStrings = CribbageStrings.ErrorStrings;
 import {
-    aceOfClubs, aceOfDiamonds, aceOfHearts, aceOfSpades,
-    eightOfClubs, eightOfDiamonds, eightOfHearts, eightOfSpades,
-    fiveOfClubs, fiveOfHearts, fiveOfSpades, fourOfClubs, fourOfDiamonds, fourOfHearts, fourOfSpades,
-    jackOfDiamonds, jackOfHearts, jackOfSpades,
-    kingOfClubs, kingOfDiamonds, kingOfHearts, kingOfSpades,
-    nineOfClubs, nineOfDiamonds, nineOfHearts,
-    queenOfClubs, queenOfDiamonds, queenOfHearts, queenOfSpades,
-    sevenOfClubs, sevenOfDiamonds, sevenOfHearts, sevenOfSpades, sixOfClubs, sixOfDiamonds, sixOfHearts, sixOfSpades,
-    tenOfClubs, tenOfDiamonds, tenOfHearts, tenOfSpades, threeOfClubs, threeOfDiamonds, threeOfSpades, twoOfClubs, twoOfDiamonds, twoOfHearts
+    aceOfClubs,
+    aceOfDiamonds,
+    aceOfHearts,
+    aceOfSpades,
+    eightOfClubs,
+    eightOfDiamonds,
+    eightOfHearts,
+    eightOfSpades,
+    fiveOfClubs,
+    fiveOfHearts,
+    fiveOfSpades,
+    fourOfClubs,
+    fourOfDiamonds,
+    fourOfHearts,
+    fourOfSpades,
+    jackOfDiamonds,
+    jackOfHearts,
+    jackOfSpades,
+    kingOfClubs,
+    kingOfDiamonds,
+    kingOfHearts,
+    kingOfSpades,
+    nineOfClubs,
+    nineOfDiamonds,
+    nineOfHearts,
+    queenOfClubs,
+    queenOfDiamonds,
+    queenOfHearts,
+    queenOfSpades,
+    sevenOfClubs,
+    sevenOfDiamonds,
+    sevenOfHearts,
+    sevenOfSpades,
+    sixOfClubs,
+    sixOfDiamonds,
+    sixOfHearts,
+    sixOfSpades,
+    tenOfClubs,
+    tenOfDiamonds,
+    tenOfHearts,
+    tenOfSpades,
+    threeOfClubs,
+    threeOfDiamonds,
+    threeOfSpades,
+    twoOfClubs,
+    twoOfDiamonds,
+    twoOfHearts,
 } from './StandardCards';
 
-describe('Test a Cribbage game between two players', function () {
+describe('Test a Cribbage game between two players', function() {
     let game, playerOne, playerTwo;
-    beforeEach(function () {
+    beforeEach(function() {
         playerOne = new CribbagePlayer('Alice', new CribbageHand([]));
         playerTwo = new CribbagePlayer('Bob', new CribbageHand([]));
-        game = new Cribbage(new Players<CribbagePlayer>([playerOne, playerTwo]));
+        game = new Cribbage(
+            new Players<CribbagePlayer>([playerOne, playerTwo])
+        );
         game.initializeGame();
     });
-    it('doesn\'t allow duplicate players', function () {
-        expect(function () {
+    it("doesn't allow duplicate players", function() {
+        expect(function() {
             game.addPlayer(playerOne);
         }).toThrow(ErrorStrings.PLAYER_ALREADY_IN_GAME);
     });
-    it('cuts a random dealer', function () {
+    it('cuts a random dealer', function() {
         let sameDealerEveryTime = true;
         let lastDealer = null;
         for (let ix = 0; ix < 1000; ix++) {
             game.cutForDealer();
             if (lastDealer === null) {
                 lastDealer = game.dealer;
-            }
-            else if (!lastDealer.equalsOther(game.dealer)) {
+            } else if (!lastDealer.equalsOther(game.dealer)) {
                 sameDealerEveryTime = false;
                 break;
             }
         }
         expect(sameDealerEveryTime).toBe(false);
     });
-    it('sets the next dealer correctly', function () {
+    it('sets the next dealer correctly', function() {
         game.dealer = playerOne;
         game.nextPlayerInSequence = playerTwo;
         game.setNextDealer();
@@ -60,11 +103,15 @@ describe('Test a Cribbage game between two players', function () {
         expect(game.dealer.equalsOther(playerTwo)).toBe(true);
         expect(game.nextPlayerInSequence.equalsOther(playerOne)).toBe(true);
     });
-    it('sets the next player in the sequence correctly', function () {
-        expect(game.nextPlayerInOrder(playerOne).equalsOther(playerTwo)).toBe(true);
-        expect(game.nextPlayerInOrder(playerTwo).equalsOther(playerOne)).toBe(true);
+    it('sets the next player in the sequence correctly', function() {
+        expect(game.nextPlayerInOrder(playerOne).equalsOther(playerTwo)).toBe(
+            true
+        );
+        expect(game.nextPlayerInOrder(playerTwo).equalsOther(playerOne)).toBe(
+            true
+        );
     });
-    it('deals the right number of cards and assigns a dealer', function () {
+    it('deals the right number of cards and assigns a dealer', function() {
         expect(game.dealer).toBe(null);
         expect(game.players.itemAt(0).numCards()).toEqual(0);
         expect(game.players.itemAt(1).numCards()).toEqual(0);
@@ -104,7 +151,7 @@ describe('Test a Cribbage game between two players', function () {
         return areDistinct;
     }
 
-    it('deals random cards each time', function () {
+    it('deals random cards each time', function() {
         game.cutForDealer();
         game.deal();
         const handOne = copyHand(game.players.itemAt(0).hand.items);
@@ -115,31 +162,51 @@ describe('Test a Cribbage game between two players', function () {
         expect(handsAreDistinct(handOne, handOneAgain)).toBe(true);
         expect(handsAreDistinct(handTwo, handTwoAgain)).toBe(true);
     });
-    it('waits for the kitty to be full before letting players play', function () {
-        expect(function () {
+    it('waits for the kitty to be full before letting players play', function() {
+        expect(function() {
             game.playCard(playerTwo.name);
         }).toThrow(ErrorStrings.KITTY_NOT_READY);
     });
-    it('doesn\'t let a player throw the same card twice', function () {
+    it("doesn't let a player throw the same card twice", function() {
         game.cutForDealer();
         game.deal();
         // get the first players first card
         const firstPlayer = game.players.itemAt(0);
         const firstCard = playerOne.hand.itemAt(0);
-        expect(function () {
-            game.giveToKitty(firstPlayer.name, new ItemCollection([firstCard, firstCard]));
-        })
-            .toThrow(ErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY);
+        expect(function() {
+            game.giveToKitty(
+                firstPlayer.name,
+                new ItemCollection([firstCard, firstCard])
+            );
+        }).toThrow(ErrorStrings.DUPLICATE_CARD_THROWN_TO_KITTY);
     });
-    it('removes a player from play if they play their last card', function () {
-        playerOne.hand =
-            new CribbageHand([aceOfClubs, aceOfDiamonds, aceOfHearts, aceOfSpades, twoOfDiamonds, threeOfSpades]);
-        playerTwo.hand =
-            new CribbageHand([jackOfSpades, queenOfClubs, queenOfHearts, queenOfSpades, kingOfHearts, kingOfSpades]);
+    it('removes a player from play if they play their last card', function() {
+        playerOne.hand = new CribbageHand([
+            aceOfClubs,
+            aceOfDiamonds,
+            aceOfHearts,
+            aceOfSpades,
+            twoOfDiamonds,
+            threeOfSpades,
+        ]);
+        playerTwo.hand = new CribbageHand([
+            jackOfSpades,
+            queenOfClubs,
+            queenOfHearts,
+            queenOfSpades,
+            kingOfHearts,
+            kingOfSpades,
+        ]);
         game.dealer = playerOne;
         game.nextPlayerInSequence = playerTwo;
-        game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([twoOfDiamonds, threeOfSpades]));
-        game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([jackOfSpades, queenOfClubs]));
+        game.giveToKitty(
+            playerOne.name,
+            new ItemCollection<BaseCard>([twoOfDiamonds, threeOfSpades])
+        );
+        game.giveToKitty(
+            playerTwo.name,
+            new ItemCollection<BaseCard>([jackOfSpades, queenOfClubs])
+        );
         game.cut = new BaseCard(Suit.Spades, Value.King);
         game.playersInPlay.addItems(game.players.items);
         game.playCard(playerTwo.name, queenOfHearts);
@@ -153,71 +220,114 @@ describe('Test a Cribbage game between two players', function () {
         expect(game.playersInPlay.indexOfItem(playerTwo)).toBe(0); // nobody should be left
         expect(game.count).toEqual(0); // expect the game to have reset the sequence
     });
-    describe('Test with fixed hands, starting at 0 points', function () {
-        beforeEach(function () {
-            playerOne.hand =
-                new CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
-            playerTwo.hand =
-                new CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
+    describe('Test with fixed hands, starting at 0 points', function() {
+        beforeEach(function() {
+            playerOne.hand = new CribbageHand([
+                sevenOfSpades,
+                sevenOfDiamonds,
+                eightOfHearts,
+                eightOfSpades,
+                nineOfDiamonds,
+                tenOfClubs,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                nineOfHearts,
+                tenOfDiamonds,
+                jackOfSpades,
+                queenOfHearts,
+                kingOfClubs,
+                kingOfHearts,
+            ]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts])
+            );
             game.cut = kingOfSpades;
             game.playersInPlay.addItems(game.players.items);
         });
-        it('takes cards from the players hands when they give to the kitty', function () {
+        it('takes cards from the players hands when they give to the kitty', function() {
             expect(playerOne.hand.size()).toEqual(4);
             expect(playerTwo.hand.size()).toEqual(4);
             expect(game.kitty.size()).toEqual(4);
         });
-        it('doesn\'t let a player play a card they don\'t have', function () {
-            expect(function () {
+        it("doesn't let a player play a card they don't have", function() {
+            expect(function() {
                 game.playCard(playerTwo.name, tenOfClubs);
-            }).toThrow(`${ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD} the ${tenOfClubs.toString()}!`);
+            }).toThrow(
+                `${
+                    ErrorStrings.FMT_PLAYER_DOESNT_HAVE_CARD
+                } the ${tenOfClubs.toString()}!`
+            );
         });
-        it('ensures players play in order', function () {
-            expect(function () {
+        it('ensures players play in order', function() {
+            expect(function() {
                 game.playCard(playerOne.name, sevenOfSpades);
             }).toThrow(ErrorStrings.FMT_NOT_NEXT_PLAYER + playerTwo.name);
         });
-        it('knows how to count points in round 2', function () {
+        it('knows how to count points in round 2', function() {
             expect(playerOne.countPoints(game.cut)).toEqual(12);
             expect(playerTwo.countPoints(game.cut)).toEqual(6);
             expect(game.kitty.countPoints(game.cut, true)).toEqual(6);
         });
-        describe('Test playing cards', function () {
-            beforeEach(function () {
+        describe('Test playing cards', function() {
+            beforeEach(function() {
                 game.playCard(playerTwo.name, queenOfHearts);
                 game.playCard(playerOne.name, eightOfSpades);
                 game.playCard(playerTwo.name, nineOfHearts);
             });
-            it('does not allow exceeding 31', function () {
-                expect(function () {
+            it('does not allow exceeding 31', function() {
+                expect(function() {
                     game.playCard(playerOne.name, sevenOfSpades);
                 }).toThrow(ErrorStrings.EXCEEDS_31);
             });
-            it('adds to the sequence', function () {
+            it('adds to the sequence', function() {
                 expect(game.sequence.cards.countItems()).toEqual(3);
             });
-            it('knows when the game is over', function () {
+            it('knows when the game is over', function() {
                 game.teams.findTeam(playerOne).addPoints(playerOne, 119);
-                expect(playerOne.hand.takeCard(new BaseCard(Suit.Spades, Value.Ace))).toBe(true);
+                expect(
+                    playerOne.hand.takeCard(
+                        new BaseCard(Suit.Spades, Value.Ace)
+                    )
+                ).toBe(true);
             });
         });
     });
-    describe('Test an entire round of play', function () {
-        beforeEach(function () {
-        });
-        it('knows how to play one round', function () {
-            playerOne.hand =
-                new CribbageHand([sevenOfSpades, sevenOfDiamonds, eightOfHearts, eightOfSpades, nineOfDiamonds, tenOfClubs]);
-            playerTwo.hand =
-                new CribbageHand([nineOfHearts, tenOfDiamonds, jackOfSpades, queenOfHearts, kingOfClubs, kingOfHearts]);
+    describe('Test an entire round of play', function() {
+        beforeEach(function() {});
+        it('knows how to play one round', function() {
+            playerOne.hand = new CribbageHand([
+                sevenOfSpades,
+                sevenOfDiamonds,
+                eightOfHearts,
+                eightOfSpades,
+                nineOfDiamonds,
+                tenOfClubs,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                nineOfHearts,
+                tenOfDiamonds,
+                jackOfSpades,
+                queenOfHearts,
+                kingOfClubs,
+                kingOfHearts,
+            ]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([sevenOfDiamonds, eightOfHearts]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([sevenOfDiamonds, eightOfHearts])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([kingOfClubs, kingOfHearts])
+            );
             game.cut = new BaseCard(Suit.Spades, Value.King);
             game.playersInPlay.addItems(game.players.items);
             game.playCard(playerTwo.name, nineOfHearts);
@@ -247,15 +357,33 @@ describe('Test a Cribbage game between two players', function () {
             );
             expect(game.dealer.equalsOther(playerTwo)).toBe(true);
         });
-        it('knows how to play one round', function () {
-            playerOne.hand =
-                new CribbageHand([aceOfClubs, aceOfHearts, twoOfDiamonds, nineOfDiamonds, tenOfClubs, queenOfDiamonds]);
-            playerTwo.hand =
-                new CribbageHand([threeOfClubs, fourOfSpades, sixOfSpades, sevenOfClubs, jackOfHearts, kingOfSpades]);
+        it('knows how to play one round', function() {
+            playerOne.hand = new CribbageHand([
+                aceOfClubs,
+                aceOfHearts,
+                twoOfDiamonds,
+                nineOfDiamonds,
+                tenOfClubs,
+                queenOfDiamonds,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                threeOfClubs,
+                fourOfSpades,
+                sixOfSpades,
+                sevenOfClubs,
+                jackOfHearts,
+                kingOfSpades,
+            ]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([jackOfHearts, kingOfSpades]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([nineOfDiamonds, tenOfClubs])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([jackOfHearts, kingOfSpades])
+            );
             game.cut = new BaseCard(Suit.Spades, Value.Two);
             game.playersInPlay.addItems(game.players.items);
             game.playCard(playerTwo.name, threeOfClubs);
@@ -269,15 +397,33 @@ describe('Test a Cribbage game between two players', function () {
             game.playCard(playerOne.name, aceOfClubs);
             expect(game.roundOverResetState).toNotHaveBeenCalled();
         });
-        it('knows how to play one round', function () {
-            playerOne.hand =
-                new CribbageHand([fourOfSpades, fiveOfHearts, sixOfDiamonds, sixOfHearts, eightOfHearts, tenOfHearts]);
-            playerTwo.hand =
-                new CribbageHand([twoOfHearts, threeOfDiamonds, fourOfClubs, fiveOfClubs, jackOfHearts, kingOfDiamonds]);
+        it('knows how to play one round', function() {
+            playerOne.hand = new CribbageHand([
+                fourOfSpades,
+                fiveOfHearts,
+                sixOfDiamonds,
+                sixOfHearts,
+                eightOfHearts,
+                tenOfHearts,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                twoOfHearts,
+                threeOfDiamonds,
+                fourOfClubs,
+                fiveOfClubs,
+                jackOfHearts,
+                kingOfDiamonds,
+            ]);
             game.dealer = playerTwo;
             game.nextPlayerInSequence = playerOne;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([eightOfHearts, tenOfHearts]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([jackOfHearts, kingOfDiamonds]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([eightOfHearts, tenOfHearts])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([jackOfHearts, kingOfDiamonds])
+            );
             game.cut = fourOfDiamonds;
             game.playersInPlay.addItems(game.players.items);
             game.playCard(playerOne.name, fourOfSpades);
@@ -296,16 +442,34 @@ describe('Test a Cribbage game between two players', function () {
             game.playCard(playerOne.name, sixOfHearts);
             expect(game.roundOverResetState).toHaveBeenCalled();
         });
-        it('counts correctly', function () {
+        it('counts correctly', function() {
             // Expose a bug where the flush isn't counted correctly
-            playerOne.hand =
-                new CribbageHand([twoOfHearts, fiveOfHearts, eightOfHearts, kingOfHearts, aceOfClubs, threeOfClubs]);
-            playerTwo.hand =
-                new CribbageHand([sixOfSpades, sevenOfDiamonds, sevenOfHearts, kingOfSpades, kingOfClubs, tenOfSpades]);
+            playerOne.hand = new CribbageHand([
+                twoOfHearts,
+                fiveOfHearts,
+                eightOfHearts,
+                kingOfHearts,
+                aceOfClubs,
+                threeOfClubs,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                sixOfSpades,
+                sevenOfDiamonds,
+                sevenOfHearts,
+                kingOfSpades,
+                kingOfClubs,
+                tenOfSpades,
+            ]);
             game.dealer = playerTwo;
             game.nextPlayerInSequence = playerOne;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([aceOfClubs, threeOfClubs]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfClubs, tenOfSpades]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([aceOfClubs, threeOfClubs])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([kingOfClubs, tenOfSpades])
+            );
             game.cut = sixOfHearts;
             game.playersInPlay.addItems(game.players.items);
             game.playCard(playerOne.name, eightOfHearts);
@@ -320,35 +484,61 @@ describe('Test a Cribbage game between two players', function () {
             expect(game.teams.findTeam(playerOne).countPoints()).toEqual(9);
         });
     });
-    describe('Test player playing cards after other player says \'go\'', function () {
-        beforeEach(function () {
-            playerOne.hand =
-                new CribbageHand([aceOfClubs, twoOfDiamonds, sixOfClubs, eightOfClubs, tenOfClubs, queenOfHearts]);
-            playerTwo.hand =
-                new CribbageHand([threeOfSpades, fiveOfHearts, eightOfSpades, queenOfSpades, kingOfSpades, kingOfClubs]);
+    describe("Test player playing cards after other player says 'go'", function() {
+        beforeEach(function() {
+            playerOne.hand = new CribbageHand([
+                aceOfClubs,
+                twoOfDiamonds,
+                sixOfClubs,
+                eightOfClubs,
+                tenOfClubs,
+                queenOfHearts,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                threeOfSpades,
+                fiveOfHearts,
+                eightOfSpades,
+                queenOfSpades,
+                kingOfSpades,
+                kingOfClubs,
+            ]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
             game.cut = queenOfClubs;
             game.playersInPlay.addItems(game.players.items);
         });
-        it('sets the next player correctly', function () {
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfSpades, kingOfClubs]));
+        it('sets the next player correctly', function() {
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([kingOfSpades, kingOfClubs])
+            );
             game.playCard(playerTwo.name, threeOfSpades);
             game.playCard(playerOne.name, eightOfClubs);
             game.playCard(playerTwo.name, queenOfSpades);
             game.playCard(playerOne.name, sixOfClubs);
             game.go(playerTwo.name);
             game.playCard(playerOne.name, twoOfDiamonds);
-            expect(function () {
+            expect(function() {
                 game.playCard(playerOne.name, aceOfClubs);
-            }).toNotThrow(`${ErrorStrings.FMT_NOT_NEXT_PLAYER} + ${game.nextPlayerInSequence.name}`);
+            }).toNotThrow(
+                `${ErrorStrings.FMT_NOT_NEXT_PLAYER} + ${game.nextPlayerInSequence.name}`
+            );
         });
-        it('gives the correct player the point', function () {
+        it('gives the correct player the point', function() {
             game.dealer = playerTwo;
             game.nextPlayerInSequence = playerOne;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([kingOfSpades, kingOfClubs]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([kingOfSpades, kingOfClubs])
+            );
             playerOne.hand.removeItem(eightOfClubs);
             playerOne.hand.addItems([aceOfDiamonds]);
             game.playCard(playerOne.name, aceOfClubs);
@@ -361,9 +551,15 @@ describe('Test a Cribbage game between two players', function () {
             game.go(playerTwo.name);
             expect(game.getTeam(0).countPoints()).toEqual(1); // One point for the go
         });
-        it('sets the next player correctly when a player gets a go and has no more cards but the opponent does', function () {
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([threeOfSpades, fiveOfHearts]));
+        it('sets the next player correctly when a player gets a go and has no more cards but the opponent does', function() {
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([tenOfClubs, queenOfHearts])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([threeOfSpades, fiveOfHearts])
+            );
             playerOne.hand.removeItem(sixOfClubs);
             playerOne.hand.removeItem(eightOfClubs);
             playerOne.hand.addItems([aceOfDiamonds, twoOfClubs]);
@@ -377,24 +573,48 @@ describe('Test a Cribbage game between two players', function () {
             expect(game.count).toEqual(0); // The round should restart because there will be no players left in play
             expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
         });
-        it('sets the next player correctly after one scores 31', function () {
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([twoOfDiamonds, sixOfClubs]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([threeOfSpades, eightOfSpades]));
+        it('sets the next player correctly after one scores 31', function() {
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([twoOfDiamonds, sixOfClubs])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([threeOfSpades, eightOfSpades])
+            );
             game.playCard(playerTwo.name, queenOfSpades);
             game.playCard(playerOne.name, queenOfHearts);
             game.playCard(playerTwo.name, kingOfSpades);
             game.playCard(playerOne.name, aceOfClubs);
             expect(game.nextPlayerInSequence.equalsOther(playerTwo)).toBe(true);
         });
-        it('sets the next player correctly after a go', function () {
-            playerOne.hand =
-                new CribbageHand([twoOfClubs, threeOfSpades, fiveOfClubs, sixOfClubs, sevenOfClubs, sevenOfDiamonds]);
-            playerTwo.hand =
-                new CribbageHand([twoOfDiamonds, eightOfClubs, eightOfDiamonds, jackOfSpades, jackOfHearts, queenOfHearts]);
+        it('sets the next player correctly after a go', function() {
+            playerOne.hand = new CribbageHand([
+                twoOfClubs,
+                threeOfSpades,
+                fiveOfClubs,
+                sixOfClubs,
+                sevenOfClubs,
+                sevenOfDiamonds,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                twoOfDiamonds,
+                eightOfClubs,
+                eightOfDiamonds,
+                jackOfSpades,
+                jackOfHearts,
+                queenOfHearts,
+            ]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([twoOfClubs, threeOfSpades]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([twoOfDiamonds, queenOfHearts]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([twoOfClubs, threeOfSpades])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([twoOfDiamonds, queenOfHearts])
+            );
             game.playCard(playerTwo.name, eightOfClubs);
             game.playCard(playerOne.name, sevenOfClubs);
             game.playCard(playerTwo.name, eightOfDiamonds);
@@ -409,15 +629,33 @@ describe('Test a Cribbage game between two players', function () {
             // Player two is out of cards and player one has one card left, expect them to be the next player to play
             expect(game.nextPlayerInSequence.equalsOther(playerOne)).toBe(true);
         });
-        it('gives the player 15 for two AND a point for the last card', function () {
-            playerOne.hand =
-                new CribbageHand([nineOfClubs, eightOfDiamonds, tenOfHearts, jackOfDiamonds, aceOfSpades, fourOfSpades]);
-            playerTwo.hand =
-                new CribbageHand([nineOfHearts, kingOfDiamonds, tenOfDiamonds, fiveOfClubs, sevenOfHearts, queenOfSpades]);
+        it('gives the player 15 for two AND a point for the last card', function() {
+            playerOne.hand = new CribbageHand([
+                nineOfClubs,
+                eightOfDiamonds,
+                tenOfHearts,
+                jackOfDiamonds,
+                aceOfSpades,
+                fourOfSpades,
+            ]);
+            playerTwo.hand = new CribbageHand([
+                nineOfHearts,
+                kingOfDiamonds,
+                tenOfDiamonds,
+                fiveOfClubs,
+                sevenOfHearts,
+                queenOfSpades,
+            ]);
             game.dealer = playerOne;
             game.nextPlayerInSequence = playerTwo;
-            game.giveToKitty(playerOne.name, new ItemCollection<BaseCard>([aceOfSpades, fourOfSpades]));
-            game.giveToKitty(playerTwo.name, new ItemCollection<BaseCard>([sevenOfHearts, queenOfSpades]));
+            game.giveToKitty(
+                playerOne.name,
+                new ItemCollection<BaseCard>([aceOfSpades, fourOfSpades])
+            );
+            game.giveToKitty(
+                playerTwo.name,
+                new ItemCollection<BaseCard>([sevenOfHearts, queenOfSpades])
+            );
             game.cut = eightOfSpades;
             game.playCard(playerTwo.name, nineOfHearts);
             game.playCard(playerOne.name, nineOfClubs); // 2
@@ -437,7 +675,7 @@ describe('Test a Cribbage game between two players', function () {
             expect(game.findTeam(playerOne).countPoints()).toEqual(expected);
         });
     });
-    describe('Test the run-of-play', function () {
+    describe('Test the run-of-play', function() {
         class SeqVal {
             sequence: Sequence;
             expectedValue: number;
@@ -449,7 +687,11 @@ describe('Test a Cribbage game between two players', function () {
 
             toString() {
                 let text = '';
-                for (let index = 0; index < this.sequence.cards.countItems(); index++) {
+                for (
+                    let index = 0;
+                    index < this.sequence.cards.countItems();
+                    index++
+                ) {
                     text += this.sequence.cards.itemAt(index).toString() + ', ';
                 }
                 if (text.length > 0) {
@@ -495,77 +737,285 @@ describe('Test a Cribbage game between two players', function () {
                 return ret;
             }
         }
-        describe('Test counting points in the run-of-play', function () {
-            describe('knows how to count runs', function () {
-                it('is a run of three', function () {
-                    expect(SeqVal.makeSequence([sixOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(3);
+        describe('Test counting points in the run-of-play', function() {
+            describe('knows how to count runs', function() {
+                it('is a run of three', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            sixOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
-                it('is a run of three', function () {
-                    expect(SeqVal.makeSequence([jackOfSpades, sixOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(3);
+                it('is a run of three', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            jackOfSpades,
+                            sixOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
-                it('is a run of three', function () {
-                    expect(SeqVal.makeSequence([fourOfClubs, jackOfSpades, sixOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(3);
+                it('is a run of three', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfClubs,
+                            jackOfSpades,
+                            sixOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
-                it('is a run of zero', function () {
-                    expect(SeqVal.makeSequence([fourOfClubs, sixOfHearts, jackOfSpades, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(0);
+                it('is a run of zero', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfClubs,
+                            sixOfHearts,
+                            jackOfSpades,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(0);
                 });
-                it('is a run of four', function () {
-                    expect(SeqVal.makeSequence([sixOfHearts, eightOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(4);
+                it('is a run of four', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            sixOfHearts,
+                            eightOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(4);
                 });
-                it('is a run of four', function () {
-                    expect(SeqVal.makeSequence([jackOfSpades, sixOfHearts, eightOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(4);
+                it('is a run of four', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            jackOfSpades,
+                            sixOfHearts,
+                            eightOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(4);
                 });
-                it('is a run of four', function () {
-                    expect(SeqVal.makeSequence([fourOfHearts, jackOfSpades, sixOfHearts, eightOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(4);
+                it('is a run of four', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfHearts,
+                            jackOfSpades,
+                            sixOfHearts,
+                            eightOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(4);
                 });
-                it('is a run of four', function () {
-                    expect(SeqVal.makeSequence([fourOfHearts, fourOfSpades, jackOfSpades, sixOfHearts, eightOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(4);
+                it('is a run of four', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfHearts,
+                            fourOfSpades,
+                            jackOfSpades,
+                            sixOfHearts,
+                            eightOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(4);
                 });
-                it('is a run of three', function () {
-                    expect(SeqVal.makeSequence([fourOfHearts, fourOfSpades, eightOfHearts, jackOfSpades, sixOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(3);
+                it('is a run of three', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfHearts,
+                            fourOfSpades,
+                            eightOfHearts,
+                            jackOfSpades,
+                            sixOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
-                it('is a run of zero', function () {
-                    expect(SeqVal.makeSequence([fourOfHearts, fourOfSpades, sixOfHearts, eightOfHearts, jackOfSpades, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(0);
+                it('is a run of zero', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfHearts,
+                            fourOfSpades,
+                            sixOfHearts,
+                            eightOfHearts,
+                            jackOfSpades,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(0);
                 });
-                it('is a run of three', function () {
-                    expect(SeqVal.makeSequence([fourOfHearts, fourOfSpades, eightOfHearts, jackOfSpades, sixOfHearts, fiveOfHearts, sevenOfHearts]).countPoints()).toEqual(3);
+                it('is a run of three', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfHearts,
+                            fourOfSpades,
+                            eightOfHearts,
+                            jackOfSpades,
+                            sixOfHearts,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
-                it('is a run of five', function () {
-                    expect(SeqVal.makeSequence([fiveOfHearts, sevenOfHearts, fourOfHearts, sixOfHearts, eightOfHearts]).countPoints()).toEqual(5);
+                it('is a run of five', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fiveOfHearts,
+                            sevenOfHearts,
+                            fourOfHearts,
+                            sixOfHearts,
+                            eightOfHearts,
+                        ]).countPoints()
+                    ).toEqual(5);
                 });
-                it('is a run of five', function () {
-                    expect(SeqVal.makeSequence([jackOfSpades, fiveOfHearts, sevenOfHearts, fourOfHearts, sixOfHearts, eightOfHearts]).countPoints()).toEqual(5);
+                it('is a run of five', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            jackOfSpades,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                            fourOfHearts,
+                            sixOfHearts,
+                            eightOfHearts,
+                        ]).countPoints()
+                    ).toEqual(5);
                 });
-                it('is a run of five', function () {
-                    expect(SeqVal.makeSequence([fourOfClubs, jackOfSpades, fiveOfHearts, sevenOfHearts, fourOfHearts, sixOfHearts, eightOfHearts]).countPoints()).toEqual(5);
+                it('is a run of five', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfClubs,
+                            jackOfSpades,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                            fourOfHearts,
+                            sixOfHearts,
+                            eightOfHearts,
+                        ]).countPoints()
+                    ).toEqual(5);
                 });
-                it('is a run of five', function () {
-                    expect(SeqVal.makeSequence([fourOfDiamonds, fourOfClubs, jackOfSpades, fiveOfHearts, sevenOfHearts, fourOfHearts, sixOfHearts, eightOfHearts]).countPoints()).toEqual(5);
+                it('is a run of five', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfDiamonds,
+                            fourOfClubs,
+                            jackOfSpades,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                            fourOfHearts,
+                            sixOfHearts,
+                            eightOfHearts,
+                        ]).countPoints()
+                    ).toEqual(5);
                 });
-                it('is a run of four', function () {
-                    expect(SeqVal.makeSequence([fourOfDiamonds, fourOfClubs, eightOfHearts, jackOfSpades, sevenOfHearts, fiveOfHearts, fourOfHearts, sixOfHearts]).countPoints()).toEqual(4);
+                it('is a run of four', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfDiamonds,
+                            fourOfClubs,
+                            eightOfHearts,
+                            jackOfSpades,
+                            sevenOfHearts,
+                            fiveOfHearts,
+                            fourOfHearts,
+                            sixOfHearts,
+                        ]).countPoints()
+                    ).toEqual(4);
                 });
-                it('is a run of three', function () {
-                    expect(SeqVal.makeSequence([fourOfDiamonds, fourOfClubs, eightOfHearts, sevenOfHearts, jackOfSpades, fiveOfHearts, fourOfHearts, sixOfHearts]).countPoints()).toEqual(3);
+                it('is a run of three', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfDiamonds,
+                            fourOfClubs,
+                            eightOfHearts,
+                            sevenOfHearts,
+                            jackOfSpades,
+                            fiveOfHearts,
+                            fourOfHearts,
+                            sixOfHearts,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
-                it('is a run of zero', function () {
-                    expect(SeqVal.makeSequence([fourOfDiamonds, fourOfClubs, fiveOfHearts, sevenOfHearts, jackOfSpades, fourOfHearts, sixOfHearts, eightOfHearts]).countPoints()).toEqual(0);
+                it('is a run of zero', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            fourOfDiamonds,
+                            fourOfClubs,
+                            fiveOfHearts,
+                            sevenOfHearts,
+                            jackOfSpades,
+                            fourOfHearts,
+                            sixOfHearts,
+                            eightOfHearts,
+                        ]).countPoints()
+                    ).toEqual(0);
                 });
-                it('is a run of three', function () {
-                    expect(SeqVal.makeSequence([sixOfHearts, fourOfClubs, eightOfHearts, sevenOfClubs, sixOfDiamonds]).countPoints()).toEqual(3);
+                it('is a run of three', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            sixOfHearts,
+                            fourOfClubs,
+                            eightOfHearts,
+                            sevenOfClubs,
+                            sixOfDiamonds,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
-                it('is a run of three, twice!', function () {
-                    expect(SeqVal.makeSequence([sevenOfSpades, fiveOfHearts, sixOfDiamonds]).countPoints()).toEqual(3);
-                    expect(SeqVal.makeSequence([sevenOfSpades, fiveOfHearts, sixOfDiamonds, fiveOfSpades, sevenOfHearts]).countPoints()).toEqual(3);
+                it('is a run of three, twice!', function() {
+                    expect(
+                        SeqVal.makeSequence([
+                            sevenOfSpades,
+                            fiveOfHearts,
+                            sixOfDiamonds,
+                        ]).countPoints()
+                    ).toEqual(3);
+                    expect(
+                        SeqVal.makeSequence([
+                            sevenOfSpades,
+                            fiveOfHearts,
+                            sixOfDiamonds,
+                            fiveOfSpades,
+                            sevenOfHearts,
+                        ]).countPoints()
+                    ).toEqual(3);
                 });
             });
-            it('knows how to count of-a-kinds', function () {
-                const pair = new SeqVal(SeqVal.makeSequence([sevenOfSpades, sevenOfHearts]), 2);
-                const threeOfAKind = new SeqVal(SeqVal.makeSequence([sevenOfSpades, sevenOfHearts, sevenOfClubs]), 6);
-                const fourOfAKind = new SeqVal(SeqVal.makeSequence([sevenOfSpades, sevenOfHearts, sevenOfClubs, sevenOfDiamonds]), 12);
+            it('knows how to count of-a-kinds', function() {
+                const pair = new SeqVal(
+                    SeqVal.makeSequence([sevenOfSpades, sevenOfHearts]),
+                    2
+                );
+                const threeOfAKind = new SeqVal(
+                    SeqVal.makeSequence([
+                        sevenOfSpades,
+                        sevenOfHearts,
+                        sevenOfClubs,
+                    ]),
+                    6
+                );
+                const fourOfAKind = new SeqVal(
+                    SeqVal.makeSequence([
+                        sevenOfSpades,
+                        sevenOfHearts,
+                        sevenOfClubs,
+                        sevenOfDiamonds,
+                    ]),
+                    12
+                );
                 expect(pair.countPoints()).toEqual(pair.expectedValue);
-                expect(threeOfAKind.countPoints()).toEqual(threeOfAKind.expectedValue);
-                expect(fourOfAKind.countPoints()).toEqual(fourOfAKind.expectedValue);
+                expect(threeOfAKind.countPoints()).toEqual(
+                    threeOfAKind.expectedValue
+                );
+                expect(fourOfAKind.countPoints()).toEqual(
+                    fourOfAKind.expectedValue
+                );
             });
         });
     });
