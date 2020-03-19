@@ -1,6 +1,6 @@
 {
     "name": "@sean-brown/card_games",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "author": "Sean Brown",
     "license": "ISC",
     "bugs": {
@@ -30,8 +30,8 @@
     },
     "devDependencies": {
         "@types/expect": "^1.20.3",
-        "@types/karma": "^1.7.5",
         "@types/jest": "^23.3.10",
+        "@types/karma": "^1.7.5",
         "grunt": "^1.0.3",
         "jasmine-node": "^2.0.0-beta4",
         "jest": "^23.6.0",
