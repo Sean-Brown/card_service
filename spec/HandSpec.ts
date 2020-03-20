@@ -1,40 +1,46 @@
 import * as expect from 'expect';
-import { BaseHand } from '../../card_service/base_classes/collections/hand';
-import { aceOfClubs, aceOfSpades, eightOfClubs, fourOfHearts, jackOfDiamonds } from './StandardCards';
+import { BaseHand } from '../base_classes/collections/hand';
+import {
+    aceOfClubs,
+    aceOfSpades,
+    eightOfClubs,
+    fourOfHearts,
+    jackOfDiamonds,
+} from './StandardCards';
 
-describe('Test the Hand\'s functionality', function () {
+describe("Test the Hand's functionality", function() {
     let hand;
-    beforeEach(function () {
+    beforeEach(function() {
         hand = new BaseHand([]);
     });
-    it('has no cards', function () {
+    it('has no cards', function() {
         expect(hand.size()).toEqual(0);
     });
-    it('does not play a card it doesn\'t have', function () {
+    it("does not play a card it doesn't have", function() {
         expect(hand.playCard(aceOfClubs)).toBe(false);
     });
-    describe('Test a Hand with four cards', function () {
+    describe('Test a Hand with four cards', function() {
         const duplicateCard = eightOfClubs;
-        beforeEach(function () {
+        beforeEach(function() {
             hand.takeCard(duplicateCard);
             hand.takeCard(aceOfSpades);
             hand.takeCard(jackOfDiamonds);
             hand.takeCard(fourOfHearts);
         });
-        afterEach(function () {
+        afterEach(function() {
             hand.removeAll();
         });
-        it('has four cards', function () {
+        it('has four cards', function() {
             expect(hand.size()).toEqual(4);
         });
-        it('does not take a card it already has', function () {
+        it('does not take a card it already has', function() {
             expect(hand.takeCard(duplicateCard)).toBe(false);
         });
-        it('can play a card', function () {
+        it('can play a card', function() {
             expect(hand.playCard(duplicateCard)).toBe(true);
             expect(hand.size()).toEqual(3);
         });
-        it('can take a card', function () {
+        it('can take a card', function() {
             expect(hand.takeCard(aceOfClubs)).toBe(true);
         });
     });

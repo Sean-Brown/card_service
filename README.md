@@ -1,2 +1,3 @@
-# card_service
+# card_games
+
 Collection of card games

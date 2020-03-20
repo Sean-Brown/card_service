@@ -1,6 +1,6 @@
 import * as expect from 'expect';
-import { ItemCollection } from '../../card_service/base_classes/collections/item_collection';
-import { IItem } from '../../card_service/interfaces/iitem';
+import { IItem } from '../interfaces/iitem';
+import { ItemCollection } from '../base_classes/collections/item_collection';
 
 class BasicItem implements IItem {
     value: number;
@@ -10,23 +10,23 @@ class BasicItem implements IItem {
     }
 
     equalsOther(other: BasicItem) {
-        return (this.value === other.value);
+        return this.value === other.value;
     }
 }
 
-describe('Test the ItemCollection functionality', function () {
+describe('Test the ItemCollection functionality', function() {
     let collection;
-    beforeEach(function () {
+    beforeEach(function() {
         collection = new ItemCollection<BasicItem>([
             new BasicItem(1),
-            new BasicItem(2)
+            new BasicItem(2),
         ]);
     });
-    it('can find an item\'s index', function () {
+    it("can find an item's index", function() {
         expect(collection.indexOfItem(new BasicItem(1)) !== -1).toBe(true);
         expect(collection.indexOfItem(new BasicItem(3)) === -1).toBe(true);
     });
-    it('can add and remove items', function () {
+    it('can add and remove items', function() {
         expect(collection.countItems()).toEqual(2);
         const newItem = new BasicItem(3);
         collection.addItem(newItem);

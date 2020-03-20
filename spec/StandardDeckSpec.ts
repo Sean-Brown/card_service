@@ -1,10 +1,10 @@
 import * as expect from 'expect';
-import { BaseCard } from '../../card_service/base_classes/items/card';
-import { StandardDeck } from '../../card_service/implementations/standard_deck';
+import { StandardDeck } from '../implementations/standard_deck';
+import { BaseCard } from '../base_classes/items/card';
 
-describe('Test the Standard Deck\'s functionality', function () {
+describe("Test the Standard Deck's functionality", function() {
     let deck: StandardDeck;
-    beforeEach(function () {
+    beforeEach(function() {
         deck = new StandardDeck();
     });
     function makeDeckCopy(cards: Array<BaseCard>) {
@@ -16,10 +16,10 @@ describe('Test the Standard Deck\'s functionality', function () {
         return copy;
     }
 
-    it('has the right number of cards', function () {
+    it('has the right number of cards', function() {
         expect(deck.countItems()).toEqual(52);
     });
-    it('shuffles', function () {
+    it('shuffles', function() {
         const original = makeDeckCopy(deck.items);
         deck.shuffle();
         let orderIsDifferent = false;
@@ -31,23 +31,28 @@ describe('Test the Standard Deck\'s functionality', function () {
         }
         expect(orderIsDifferent).toBe(true);
     });
-    it('draws from the top of the deck', function () {
+    it('draws from the top of the deck', function() {
         const topCard = deck.items[0];
         const draw = deck.draw();
         expect(topCard.equalsOther(draw)).toBe(true);
         expect(topCard.equalsOther(deck.items[0])).toBe(false);
     });
-    it('randomly draws a card and puts it back', function () {
+    it('randomly draws a card and puts it back', function() {
         const card = deck.randomDraw(true);
         expect(deck.items).toContain(card);
     });
-    it('randomly draws a card and does not put it back', function () {
+    it('randomly draws a card and does not put it back', function() {
         const card = deck.randomDraw(false);
         expect(deck.items).toNotContain(card);
     });
-    it('prints all the cards correctly', function () {
+    it('prints all the cards correctly', function() {
         for (let ix = 0; ix < deck.countItems(); ix++) {
-            expect(deck.itemAt(ix).toString().indexOf('undefined')).toBe(-1);
+            expect(
+                deck
+                    .itemAt(ix)
+                    .toString()
+                    .indexOf('undefined')
+            ).toBe(-1);
         }
     });
 });
